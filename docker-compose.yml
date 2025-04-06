@@ -1,4 +1,8 @@
 version: "3.11"
+
+networks:
+  demo:
+
 services:
   litellm:
     build:
@@ -6,6 +10,7 @@ services:
       args:
         target: runtime
     image: ghcr.io/berriai/litellm:main-v1.65.4-nightly
+    networks: ['demo']
     #########################################
     ## Uncomment these lines to start proxy with a config.yaml file ##
     # volumes:
@@ -31,8 +36,9 @@ services:
 
  
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     restart: always
+    networks: ['demo']
     environment:
       POSTGRES_DB: litellm
       POSTGRES_USER: llmproxy
@@ -49,6 +55,7 @@ services:
   
   prometheus:
     image: prom/prometheus
+    networks: ['demo']
     volumes:
       - prometheus_data:/prometheus
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
